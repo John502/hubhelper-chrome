@@ -1,18 +1,23 @@
 {
     "manifest_version": 2,
     "name": "Hub Helper Chrome",
-    "version": "1.0.0",
+    "permissions": [
+      "storage"
+    ],
+    "version": "2.0.0",
     "description": "Utility Extension for interacting with GIS Data Hub",
     "icons": {"16": "/images/geocomm-favicon.png", 
               "48": "/images/geocomm-favicon.png",
               "128": "/images/geocomm-favicon.png"},
-    "page_action": {
-        "default_icon": {
-            "16": "/images/geocomm-favicon.png", 
-            "48": "/images/geocomm-favicon.png",
-            "128": "/images/geocomm-favicon.png"
-        }
-    },
+    "browser_action": {
+        "default_icon": {                // optional
+          "16": "/images/geocomm-favicon.png",     // optional
+          "24": "/images/geocomm-favicon.png",     // optional
+          "32": "/images/geocomm-favicon.png"      // optional
+        },
+        "default_title": "Fetch Latest Upload",  // optional, shown in tooltip
+        "default_popup": "popup.html"    // optional
+      },
     "content_scripts": [
         {
             "matches": ["https://*.gdh.geocomm.cloud/*"],
