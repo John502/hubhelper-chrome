@@ -2,11 +2,12 @@
 class ClassWatcher {
     // ClassWatcher(document.body: element, css class, function to execute on class change)
 
-    constructor(targetNode, classToWatch, classAddedCallback) {
+    constructor(targetNode, classToWatch, classAddedCallback, classRemovedCallBack) {
 
         this.targetNode = targetNode
         this.classToWatch = classToWatch
         this.classAddedCallback = classAddedCallback
+        this.classRemovedCallBack = classRemovedCallBack
         this.observer = null
         this.lastClassState = targetNode.classList.contains(this.classToWatch)
 
@@ -35,8 +36,8 @@ class ClassWatcher {
                     if(currentClassState) {
                         this.classAddedCallback()
                     }
-                    else {
-                        this.classRemovedCallback()
+                    else{
+                        this.classRemovedCallBack()
                     }
                 }
             }
@@ -44,12 +45,63 @@ class ClassWatcher {
     }
 }
 
-function addAgenciesBtnClickEventListener(){
+// Converts call back to a promise
+const toPromise = (callback) => {
+    const promise = new Promise((resolve, reject) => {
+        try {
+            callback(resolve, reject);
+        }
+        catch (err) {
+            reject(err);
+        }
+    });
+    return promise;
+}
+
+// Class to be called for popup.js to get the chrome.storage.local object
+class GetStorageItems{
+
+    // Get the storage object by key
+    static getItemFromKey = (key) => {
+            return toPromise((resolve, reject) => {
+                chrome.storage.local.get([key], (result) => {
+                    if (chrome.runtime.lastError)
+                        reject(chrome.runtime.lastError);
+
+                    resolve(result);
+                });
+            });
+        }
+    }
+
+
+function addAgenciesBtnClickEventListener(agencies_element){
 
     //We only want to take action when the button is clicked. 
-    var agency_select_btn = document.querySelector('.set-agency-select-button');
+    const agency_select_btn = document.querySelector('.set-agency-select-button');
     agency_select_btn.addEventListener('click', sort_agencies)
+    // agencies_element.removeEventListener(agencies_element);
+}
 
+function setChromeStorage(){
+
+    // Get information about the active agency
+
+    const active_agency = JSON.parse(window.localStorage.ACTIVE_AGENCY)
+
+    const local_storage = {
+        'origin': window.origin,
+        'active_agency_id': active_agency.id,
+        'active_agency_pid': active_agency.primary_account_id,
+        'active_agency_name': active_agency.name,
+        'token': window.localStorage.access_token
+    }
+
+    // Set local storage object in chrome storage
+    chrome.storage.local.set({'local_storage': local_storage}, function() {
+        return true
+      });
+    
 }
 
 function sort_agencies(event) 
@@ -57,15 +109,14 @@ function sort_agencies(event)
 
     // Get all the buttons in the drop down list, each button has text content
     // which reprsents the agency name.
-    var dropdown_items = document.querySelectorAll('button.dropdown-item');
+    const dropdown_items = document.querySelectorAll('button.dropdown-item');
 
-    // Order the drop down by their textContent
-    var ordered_agencies = [].slice.call(dropdown_items).sort(function (a, b) {
+    // Order the drop down by their textContent and filter out any non gdh dropdown agency options
+    const ordered_agencies = [].slice.call(dropdown_items).filter(x => x.id.includes('gdh') == true).sort(function (a, b) {
          return a.textContent > b.textContent ? 1 : -1; });
-    
-    // Get the agency drop items
-    var agencies = document.querySelector('.agency-dropdown-items');
 
+    // Get the agency drop items
+    const agencies = document.querySelector('.agency-dropdown-items');
 
     // Append Child replace the node if it already exists
     ordered_agencies.forEach(element => {
@@ -78,11 +129,12 @@ function workOnClassAdd() {
 
     // Add an event listener for when nodes get added to the list
 
-    var agencies = document.querySelector('.agency-dropdown-items.dropdown-menu');
+    const agencies = document.querySelector('.agency-dropdown-items.dropdown-menu');
 
     // Add set-agency-select-button listener after because button does not exist
     // unit user selects button
-    agencies.addEventListener('DOMNodeInserted', addAgenciesBtnClickEventListener)
+    agencies.addEventListener('DOMNodeInserted', addAgenciesBtnClickEventListener(agencies))
+    
 }
 
 
@@ -90,8 +142,8 @@ function workOnClassAdd() {
 if (document.readyState === "complete" || document.readyState === "interactive") {
 
     // watch for a specific class change
-    let classWatcher = new ClassWatcher(document.body, 'modal-open', workOnClassAdd);
+    const classWatcher = new ClassWatcher(document.body, 'modal-open', workOnClassAdd, setChromeStorage);
+
+    setChromeStorage();
 
 }
-
-
