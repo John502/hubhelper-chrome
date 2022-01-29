@@ -4,7 +4,7 @@
     "permissions": [
       "storage"
     ],
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "Utility Extension for interacting with GIS Data Hub",
     "icons": {"16": "/images/geocomm-favicon.png", 
               "48": "/images/geocomm-favicon.png",
@@ -15,7 +15,7 @@
           "24": "/images/geocomm-favicon.png",     // optional
           "32": "/images/geocomm-favicon.png"      // optional
         },
-        "default_title": "Fetch",  // optional, shown in tooltip
+        "default_title": "Fetch Latest Upload",  // optional, shown in tooltip
         "default_popup": "popup.html"    // optional
       },
     "content_scripts": [
