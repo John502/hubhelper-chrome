@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Get the active agency information
 
         // Add the token to the headers for the fetch requests
-        myHeaders.append("Authorization", `Bearer ${local_storage.token}`);
+        myHeaders.append("Authorization", `Bearer ${chrome_local.token}`);
         myHeaders.append("Cache-Control", "no-cache");
 
 
