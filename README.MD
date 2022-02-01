@@ -28,3 +28,12 @@
 
 ![HubHelper Chrome in extension list](/images/hubhelper_chrome_install_5.png)
 
+## Download an Upload
+
+Click on the balloon icon for the popup menu
+
+![HubHelper get uploaded data](/images/hubhelper_chrome_install_6.png)
+
+If your balloon icon does not appear. Click the jigsaw button to enable it on the menu bar. 
+
+![HubHelper enable extension on toolbar](/images/hubhelper_chrome_install_7.png)
