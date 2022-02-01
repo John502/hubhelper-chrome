@@ -118,6 +118,7 @@ function sort_agencies(event)
     // Get the agency drop items
     const agencies = document.querySelector('.agency-dropdown-items');
 
+    
     // Append Child replace the node if it already exists
     ordered_agencies.forEach(element => {
         agencies.appendChild(element)
@@ -133,8 +134,11 @@ function workOnClassAdd() {
 
     // Add set-agency-select-button listener after because button does not exist
     // unit user selects button
-    agencies.addEventListener('DOMNodeInserted', addAgenciesBtnClickEventListener(agencies))
-    
+    if (agencies){
+
+        agencies.addEventListener('DOMNodeInserted', addAgenciesBtnClickEventListener(agencies))
+
+    }
 }
 
 
